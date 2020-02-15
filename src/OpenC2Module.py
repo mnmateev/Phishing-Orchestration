@@ -55,14 +55,34 @@ class OpenC2Module(BaseHTTPRequestHandler):
   #PHIS-21
   @staticmethod
   def receiveProofpointSignal(incomingPhishCase):
-    # reroute to next step in workflow
-    pass
+    # update case
+    ts = []
+    ts.append('internal phish signal')
+    ts.append(datetime.datetime.now())
+    incomingPhishCase.timeStamps.append(ts)
+
+    incomingPhishCase.status = 'potential internal attack'
+
+    #notify relevant users
+    #will be queried for - stubbed for now
+    recipient = 'mitko.mateev@uconn.edu'
+    sendStatusNotification(recipient, incomingPhishCase)
 
   #PHIS-22
   @staticmethod
   def receiveManualFormSignal(incomingPhishCase):
-    # reroute to next step in workflow
-    pass
+    # update case
+    ts = []
+    ts.append('external phish signal')
+    ts.append(datetime.datetime.now())
+    incomingPhishCase.timeStamps.append(ts)
+
+    incomingPhishCase.status = 'potential external attack'
+
+    # notify relevant users
+    # will be queried for - stubbed for now
+    recipient = 'mitko.mateev@uconn.edu'
+    sendStatusNotification(recipient, incomingPhishCase)
 
   #PHIS-24
   @staticmethod
@@ -82,7 +102,7 @@ class OpenC2Module(BaseHTTPRequestHandler):
 
     s.send_message(msg)
 
-    print('sent to '+recipient)
+    print('sent to '+ recipient)
     s.quit()
 
   @staticmethod
@@ -105,6 +125,3 @@ class OpenC2Module(BaseHTTPRequestHandler):
       inputPort = 80008
 
     run(port = inputPort)
-
-lst = ['mitko.mateev@uconn.edu', 'daniel.janikowski@uconn.edu', 'ryan.a.king@uconn.edu', 'imani.dasilva@uconn.edu']
-OpenC2Module.sendStatusNotificationToList(lst)
