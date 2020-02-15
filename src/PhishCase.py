@@ -5,7 +5,7 @@ class PhishCase:
     id = ''
     status = ''
     capecCode = ''
-    email = Email()
+    email = ''
     timeStamps = {}
     reportedBy = ''
     trace = []

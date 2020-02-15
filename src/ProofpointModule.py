@@ -1,4 +1,5 @@
 import json
+import jsonpickle
 import uuid
 
 class ProofpointModule:
@@ -10,5 +11,5 @@ class ProofpointModule:
     return newPhishCase
 
   def sendSignalToOpenC2(phishCase):
-    jsonMessage = json.dumps(phishCase)
+    jsonMessage = jsonpickle.encode(phishCase)
     # send to OpenC2
