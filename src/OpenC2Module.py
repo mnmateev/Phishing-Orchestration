@@ -1,5 +1,6 @@
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+import sys
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import socketserver
 import cgi
 import json
 import jsonpickle
@@ -7,6 +8,8 @@ import smtplib
 import email
 from email.mime.text import MIMEText
 import string
+import PhishCase
+import datetime
 
 class OpenC2Module(BaseHTTPRequestHandler):
 
@@ -15,21 +18,13 @@ class OpenC2Module(BaseHTTPRequestHandler):
     self.send_header('Content-type', 'application/json')
     self.end_headers()
 
-
   def do_HEAD(self):
     self._set_headers()
 
   def do_POST(self):
-    ctype, dict = cgi.parse_header(self.headers.getheader('content-type'))
-
-    # check if json message
-    if ctype != 'application/json':
-      self.send_response(400)
-      self.end_headers()
-      return
-
     #parse received message
-    parseIncomingJSON(self.rfile.read(length))
+    length = int(self.headers['Content-Length'])
+    OpenC2Module.parseIncomingJSON(self.rfile.read(length))
 
   @staticmethod
   def parseIncomingJSON(incomingJSON):
@@ -46,11 +41,11 @@ class OpenC2Module(BaseHTTPRequestHandler):
 
     # manual form --> external
     if incomingPhishCase.reportedBy == 'ManualForm':
-      receiveManualFormSignal(incomingPhishCase)
+      OpenC2Module.receiveManualFormSignal(incomingPhishCase)
 
     # Proofpoint --> internal
     if incomingPhishCase.reportedBy == 'Proofpoint':
-      receiveProofpointSignal(incomingPhishCase)
+      OpenC2Module.receiveProofpointSignal(incomingPhishCase)
 
   #PHIS-21
   @staticmethod
@@ -66,7 +61,7 @@ class OpenC2Module(BaseHTTPRequestHandler):
     #notify relevant users
     #will be queried for - stubbed for now
     recipient = 'mitko.mateev@uconn.edu'
-    sendStatusNotification(recipient, incomingPhishCase)
+    OpenC2Module.sendStatusNotification(recipient, incomingPhishCase)
 
   #PHIS-22
   @staticmethod
@@ -82,20 +77,20 @@ class OpenC2Module(BaseHTTPRequestHandler):
     # notify relevant users
     # will be queried for - stubbed for now
     recipient = 'mitko.mateev@uconn.edu'
-    sendStatusNotification(recipient, incomingPhishCase)
+    OpenC2Module.sendStatusNotification(recipient, incomingPhishCase)
 
   #PHIS-24
   @staticmethod
   def sendStatusNotification(recipient, phishCase):
     username = "PhisOrchSDP@gmail.com"
-    password = ""
+    password = "Alphabet99!"
     smtpServ = 'smtp.gmail.com'
 
     s = smtplib.SMTP(smtpServ,587)
     s.starttls()
     s.login(username, password)
 
-    msg = MIMEText('Status of phish incident case ' + phishCase.id + 'is now ' + phishCase.status +'.')
+    msg = MIMEText('Status of phish incident case ' + str(phishCase.id) + 'is now ' + phishCase.status +'.')
     msg['Subject'] = 'Status Notification [Test]'
     msg['To'] = recipient
     msg['From'] = username
@@ -110,18 +105,19 @@ class OpenC2Module(BaseHTTPRequestHandler):
     for addr in recipients:
       OpenC2Module.sendStatusNotification(addr)
 
-  def run(server_class=HTTPServer, handler_class=Server, port=8008):
-    server_address = ('', port)
-    server = server_class(server_address, handler_class)
+def run(server_class=HTTPServer, handler_class=OpenC2Module, port=8008):
+  server_address = ('127.0.0.1', port)
+  server = server_class(server_address, handler_class)
 
-    print('Starting OpenC2Module on port %d...' % port)
-    server.serve_forever()
+  print('Starting OpenC2Module on port %d...' % port)
+  print('OpenC2Module IP ' + str(server_address))
+  server.serve_forever()
 
-  if __name__ == "__main__":
+if __name__ == "__main__":
 
-    if len(argv) == 2:
-      inputPort = int(argv[1])
-    else:
-      inputPort = 80008
+  if len(sys.argv) == 2:
+    inputPort = int(sys.argv[1])
+  else:
+    inputPort = 8000
 
-    run(port = inputPort)
+  run(port = inputPort)

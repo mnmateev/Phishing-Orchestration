@@ -3,6 +3,7 @@ import jsonpickle
 import uuid
 import PhishCase
 import requests
+import datetime
 
 class ManualFormModule:
   #PHIS-23
@@ -17,10 +18,13 @@ class ManualFormModule:
   def sendSignalToOpenC2(phishCase):
     jsonMessage = jsonpickle.encode(phishCase)
     #send to OpenC2
-    openC2Addr = 'test.com'
+    openC2Addr = 'http://127.0.0.1:8000'
     response = requests.post(openC2Addr, jsonMessage)
     status = response.status_code
     if str(status) == 200:
       print('signal sent successfully.')
     else:
       print('sending failed with status code: '+str(status))
+
+phishCase = ManualFormModule.createSignal('test')
+ManualFormModule.sendSignalToOpenC2(phishCase)
