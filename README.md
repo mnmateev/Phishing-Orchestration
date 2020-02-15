@@ -1,7 +1,7 @@
 # Phishing-Orchestration
 SDP Project
 
-This requires jsonpickle and requests to run. this plugin can be installed with the command:
+This requires several libraries to work. They can be installed with the following commands:
 >pip install jsonpickle
 >pip install requests
 
