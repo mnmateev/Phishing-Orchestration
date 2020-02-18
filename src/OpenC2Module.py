@@ -120,6 +120,12 @@ class OpenC2Module(BaseHTTPRequestHandler):
     def sendStatusNotificationToList(recipients):
         for addr in recipients:
             OpenC2Module.sendStatusNotification(addr)
+            
+    #PHIS-31
+    #send to ServiceNow
+    
+    #PHIS-37
+    #receive Sandbox Analysis
 
 
 def run(server_class=HTTPServer, handler_class=OpenC2Module, port=8008):
