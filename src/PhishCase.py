@@ -1,6 +1,7 @@
 from email import *
 import datetime
 
+
 class PhishCase:
     id = ''
     status = ''
@@ -17,7 +18,7 @@ class PhishCase:
     errors = []
     otherInfo = []
 
-    def __init__(self, id, status, email, reportedBy, info = ''):
+    def __init__(self, id, status, email, reportedBy, info=''):
         self.id = id
         self.status = status
         self.capecCode = 'unknown'
@@ -32,7 +33,6 @@ class PhishCase:
         self.humanReviews = []
         self.errors = []
         self.otherInfo = []
-
 
         ts = []
         ts.append('case created by ' + reportedBy)
