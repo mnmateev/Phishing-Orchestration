@@ -21,5 +21,5 @@ How to use (as of 2/19/20):
   5. OpenC2 will then send an email with the summary of Sandbox testing.
   
   TODO: near-future implementation
-  OpenC2 sends case to SOC for human review.
-  If needed, SOC will send case to CIRT for further review & countermeasures.
+  - OpenC2 sends case to SOC for human review.
+  - If needed, SOC will send case to CIRT for further review & countermeasures.
