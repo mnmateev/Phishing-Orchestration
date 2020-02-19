@@ -29,16 +29,14 @@ class SandBoxModule(BaseHTTPRequestHandler):
 
     # PHIS-35: receive scheduled case from ServiceNow
     def do_POST(self):
+        print("incoming transmission recieved...")
         # parse received message
         length = int(self.headers['Content-Length'])
-        parsed = SandBoxModule.parseIncomingJSON(self.rfile.read(length))
 
-        if parsed:
-            self._set_headers(200)
-            self.wfile.write(self._html("Phish case successfully received by SandBox"))
-        else:
-            self._set_headers(500)
-            self.wfile.write(self._html("SandBox could not parse incoming phish case."))
+        self._set_headers(200)
+        self.wfile.write(self._html("Phish case successfully received by SandBox"))
+
+        SandBoxModule.parseIncomingJSON(self.rfile.read(length))
 
     @staticmethod
     def parseIncomingJSON(incomingJSON):
@@ -53,8 +51,10 @@ class SandBoxModule(BaseHTTPRequestHandler):
 
         incomingPhishCase.trace.append('SandBox')
 
+        print("is this ServiceNow?")
         # ServiceNow --> case to analyze
         if incomingPhishCase.trace[-2] == 'ServiceNow':
+            print("analyzing...")
             SandBoxModule.analyzeCase(incomingPhishCase)
             return True
 
@@ -102,18 +102,19 @@ class SandBoxModule(BaseHTTPRequestHandler):
 
     @staticmethod
     def sendCase(phishCase):
+        print("sending to OpenC2")
         jsonMessage = jsonpickle.encode(phishCase)
         # send to ServiceNow
-        ServiceNowaddr = 'http://127.0.0.3:8000'
-        response = requests.post(ServiceNowaddr, jsonMessage, headers={'Connection': 'close'})
+        OpenC2addr = 'http://127.0.0.1:8000'
+        response = requests.post(OpenC2addr, jsonMessage, headers={'Connection': 'close'})
         status = response.status_code
         if str(status) == "200":
             print('case sent successfully.')
         else:
             print('sending failed with status code: ' + str(status))
 
-def run(server_class=HTTPServer, handler_class=SandBoxModule, port=8008):
-    server_address = ('127.0.0.2', port)
+def run(server_class=HTTPServer, handler_class=SandBoxModule, port=8002):
+    server_address = ('127.0.0.1', port)
     server = server_class(server_address, handler_class)
 
     print('Starting SandBoxModule on port %d...' % port)
@@ -126,6 +127,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         inputPort = int(sys.argv[1])
     else:
-        inputPort = 8000
+        inputPort = 8002
 
     run(port=inputPort)

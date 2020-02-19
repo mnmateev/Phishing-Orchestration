@@ -34,16 +34,14 @@ class ServiceNowModule(BaseHTTPRequestHandler):
         self._set_headers()
 
     def do_POST(self):
+        print("incoming transmission recieved...")
         # parse and queue received message
         length = int(self.headers['Content-Length'])
-        parsed = ServiceNowModule.parseIncomingJSON(self.rfile.read(length))
 
-        if parsed:
-          self._set_headers(200)
-          self.wfile.write(self._html("Phish case successfully queued by ServiceNow"))
-        else:
-          self._set_headers(500)
-          self.wfile.write(self._html("ServiceNow could not queue incoming phish case."))
+        self._set_headers(200)
+        self.wfile.write(self._html("Phish case successfully queued by ServiceNow"))
+
+        ServiceNowModule.parseIncomingJSON(self.rfile.read(length))
 
     @staticmethod
     def parseIncomingJSON(incomingJSON):
@@ -59,7 +57,9 @@ class ServiceNowModule(BaseHTTPRequestHandler):
         incomingPhishCase.trace.append('ServiceNow')
 
         # OpenC2 --> case to queue
+        print("is this an OpenC2 message?")
         if incomingPhishCase.trace[-2] == 'OpenC2':
+            print("sending to Sandbox")
             ServiceNowModule.sendNextCase(incomingPhishCase)
             return True
 
@@ -71,7 +71,7 @@ class ServiceNowModule(BaseHTTPRequestHandler):
     def sendNextCase(caseToSend):
         jsonMessage = jsonpickle.encode(caseToSend)
         # send to SandBox
-        SandBoxaddr = 'http://127.0.0.2:8000'
+        SandBoxaddr = 'http://127.0.0.1:8002'
         response = requests.post(SandBoxaddr, jsonMessage, headers={'Connection': 'close'})
         status = response.status_code
         if str(status) == "200":
@@ -79,8 +79,8 @@ class ServiceNowModule(BaseHTTPRequestHandler):
         else:
             print('sending failed with status code: ' + str(status))
 
-def run(server_class=HTTPServer, handler_class=ServiceNowModule, port=8008):
-    server_address = ('127.0.0.3', port)
+def run(server_class=HTTPServer, handler_class=ServiceNowModule, port=8001):
+    server_address = ('127.0.0.1', port)
     server = server_class(server_address, handler_class)
 
     print('Starting ServiceNowModule on port %d...' % port)
@@ -93,6 +93,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         inputPort = int(sys.argv[1])
     else:
-        inputPort = 8000
+        inputPort = 8001
 
     run(port=inputPort)

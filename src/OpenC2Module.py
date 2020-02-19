@@ -28,16 +28,14 @@ class OpenC2Module(BaseHTTPRequestHandler):
         self._set_headers()
 
     def do_POST(self):
+        print("incoming transmission recieved...")
         # parse received message
         length = int(self.headers['Content-Length'])
-        parsed = OpenC2Module.parseIncomingJSON(self.rfile.read(length))
 
-        if parsed:
-          self._set_headers(200)
-          self.wfile.write(self._html("Phish case successfully received by OpenC2"))
-        else:
-          self._set_headers(500)
-          self.wfile.write(self._html("OpenC2 could not parse incoming phish case."))
+        self._set_headers(200)
+        self.wfile.write(self._html("Phish case successfully received by OpenC2"))
+
+        OpenC2Module.parseIncomingJSON(self.rfile.read(length))
 
     @staticmethod
     def parseIncomingJSON(incomingJSON):
@@ -80,6 +78,7 @@ class OpenC2Module(BaseHTTPRequestHandler):
         incomingPhishCase.status = 'potential internal attack'
 
         #schedule analysis
+        print("sending to ServiceNow")
         OpenC2Module.sendCaseToServiceNow(incomingPhishCase)
 
     # PHIS-22
@@ -92,7 +91,7 @@ class OpenC2Module(BaseHTTPRequestHandler):
         incomingPhishCase.timeStamps.append(ts)
 
         incomingPhishCase.status = 'potential external attack'
-
+        print("sending to ServiceNow")
         #schedule analysis
         OpenC2Module.sendCaseToServiceNow(incomingPhishCase)
 
@@ -136,7 +135,7 @@ class OpenC2Module(BaseHTTPRequestHandler):
     def sendCaseToServiceNow(phishCase):
         jsonMessage = jsonpickle.encode(phishCase)
         # send to OpenC2
-        ServiceNowAddr = 'http://127.0.0.3:8000'
+        ServiceNowAddr = 'http://127.0.0.1:8001'
         response = requests.post(ServiceNowAddr, jsonMessage, headers={'Connection': 'close'})
         status = response.status_code
         if str(status) == "200":
@@ -166,8 +165,10 @@ class OpenC2Module(BaseHTTPRequestHandler):
         recipient = 'mitko.mateev@uconn.edu'
         OpenC2Module.sendStatusNotification(recipient, phishCase, issue)
 
+class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
+    pass
 
-def run(server_class=HTTPServer, handler_class=OpenC2Module, port=8008):
+def run(server_class=ThreadingSimpleServer, handler_class=OpenC2Module, port=8000):
     server_address = ('127.0.0.1', port)
     server = server_class(server_address, handler_class)
 
