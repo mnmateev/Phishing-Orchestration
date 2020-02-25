@@ -51,7 +51,7 @@ class SandBoxModule(BaseHTTPRequestHandler):
 
         incomingPhishCase.trace.append('SandBox')
 
-        print("is this ServiceNow?")
+        # is this ServiceNow?
         # ServiceNow --> case to analyze
         if incomingPhishCase.trace[-2] == 'ServiceNow':
             print("analyzing...")
@@ -113,7 +113,10 @@ class SandBoxModule(BaseHTTPRequestHandler):
         else:
             print('sending failed with status code: ' + str(status))
 
-def run(server_class=HTTPServer, handler_class=SandBoxModule, port=8002):
+class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
+    pass
+
+def run(server_class=ThreadingSimpleServer, handler_class=SandBoxModule, port=8002):
     server_address = ('127.0.0.1', port)
     server = server_class(server_address, handler_class)
 

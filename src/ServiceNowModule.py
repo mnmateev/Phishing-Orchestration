@@ -79,7 +79,10 @@ class ServiceNowModule(BaseHTTPRequestHandler):
         else:
             print('sending failed with status code: ' + str(status))
 
-def run(server_class=HTTPServer, handler_class=ServiceNowModule, port=8001):
+class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
+    pass
+
+def run(server_class=ThreadingSimpleServer, handler_class=ServiceNowModule, port=8001):
     server_address = ('127.0.0.1', port)
     server = server_class(server_address, handler_class)
 

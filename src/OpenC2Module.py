@@ -99,7 +99,7 @@ class OpenC2Module(BaseHTTPRequestHandler):
     @staticmethod
     def sendStatusNotification(recipient, phishCase, issue):
         username = "PhisOrchSDP@gmail.com"
-        password = ""
+        password = "Alphabet99!"
         smtpServ = 'smtp.gmail.com'
 
         s = smtplib.SMTP(smtpServ, 587)
