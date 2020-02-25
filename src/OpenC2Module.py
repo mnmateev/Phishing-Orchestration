@@ -165,6 +165,20 @@ class OpenC2Module(BaseHTTPRequestHandler):
         recipient = 'mitko.mateev@uconn.edu'
         OpenC2Module.sendStatusNotification(recipient, phishCase, issue)
 
+    # TODO - create tickets
+    # send analyzed case to SOC
+    @staticmethod
+    def sendCaseToSOC(phishCase):
+        jsonMessage = jsonpickle.encode(phishCase)
+        # send to OpenC2
+        ServiceNowAddr = 'http://127.0.0.1:8003'
+        response = requests.post(ServiceNowAddr, jsonMessage, headers={'Connection': 'close'})
+        status = response.status_code
+        if str(status) == "200":
+            print('case sent to SOC successfully.')
+        else:
+            print('sending to SOC failed with status code: ' + str(status))
+
 class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
     pass
 
