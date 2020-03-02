@@ -54,8 +54,17 @@ class SOCModule(BaseHTTPRequestHandler):
   def queueCaseForReview(phishCase):
     pass
 
-  class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
+  def notAPhish(phishCase):
     pass
+
+  def isCaseSafe(phishCase):
+    pass
+
+  def elavateToCIRT(phishCase):
+    pass
+
+class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
+  pass
 
 
 def run(server_class=ThreadingSimpleServer, handler_class=SOCModule, port=8003):
