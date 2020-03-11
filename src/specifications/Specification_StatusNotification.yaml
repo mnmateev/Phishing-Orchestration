@@ -13,6 +13,8 @@ servers:
 paths:
    post:
      summary: Openc2 sends an email notification to user.
+     security:
+       - BasicAuth: []
      requestBody:
        description: Email sent to SMTP
        required: true

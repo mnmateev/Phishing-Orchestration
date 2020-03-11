@@ -13,16 +13,15 @@ servers:
 paths:
    post:
      summary: ServiceNow sends a PhishCase to analyze.
+     security:
+       - BasicAuth: []
      requestBody:
        description: PhishCase is sent to Sandbox
        required: true
        content:
          application/json:
            schema:
-             authentication: authenticates with host
-             action: POST PhishCase object
-             target: Sandbox
-             args: PhishCase object
+             $ref: '#/components/schemas/PhishCase'
      responses:
        '200':    # status code
          description: OK. sends confirmation message as a string
