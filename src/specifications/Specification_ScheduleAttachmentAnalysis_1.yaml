@@ -1,0 +1,32 @@
+openapi: 3.0.0
+info:
+ title: Schedule Attachment Analysis API
+ description: Schedule Attachment Analysis Use Case Specification
+ version: 1.0.0
+
+servers:
+ - ServiceNow
+   description: receives case to schedule from OpenC2
+ - OpenC2
+   description: send case needing Sandbox Analysis to ServiceNow
+
+paths:
+   post:
+     summary: Openc2 sends a PhishCase to schedule.
+     requestBody:
+       description: PhishCase is sent to ServiceNow
+       required: true
+       content:
+         application/json:
+           schema:
+             authentication: authenticates with host
+             action: POST PhishCase object
+             target: ServiceNow
+             args: PhishCase object
+     responses:
+       '200':    # status code
+         description: OK. sends confirmation message as a string
+         content:
+           application/json:
+             schema:
+               type: string

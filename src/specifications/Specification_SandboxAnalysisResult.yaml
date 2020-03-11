@@ -1,0 +1,32 @@
+openapi: 3.0.0
+info:
+ title: Sandbox Analysis Result API
+ description: Sandbox Analysis result Use Case Specification
+ version: 1.0.0
+
+servers:
+ - Sandbox
+   description: send analyzed PhishCase to OpenC2
+ - OpenC2
+   description: receive analyzed case from Sandbox
+
+paths:
+   post:
+     summary: Sandbox sends analysis result.
+     requestBody:
+       description: PhishCase is sent to OpenC2
+       required: true
+       content:
+         application/json:
+           schema:
+             authentication: authenticates with host
+             action: POST PhishCase object
+             target: OpenC2
+             args: PhishCase object
+     responses:
+       '200':    # status code
+         description: OK. sends confirmation message as a string
+         content:
+           application/json:
+             schema:
+               type: string

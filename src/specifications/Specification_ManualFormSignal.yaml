@@ -1,0 +1,32 @@
+openapi: 3.0.0
+info:
+ title: Manual Form Signal API
+ description: Manual Form Signal Use Case Specification
+ version: 1.0.0
+
+servers:
+ - ManualForm
+   description: Sends a PhishCase object to OpenC2
+ - OpenC2
+   description: Receives PhishCase from ManualForm
+
+paths:
+   post:
+     summary: sends PhishCase to OpenC2.
+     requestBody:
+       description: Signal is sent to OpenC2
+       required: true
+       content:
+         application/json:
+           schema:
+             authentication: authenticates with host
+             action: POST PhishCase signal
+             target: OpenC2
+             args: PhishCase signal
+     responses:
+       '200':    # status code
+         description: OK. sends confirmation message as a string
+         content:
+           application/json:
+             schema:
+               type: string

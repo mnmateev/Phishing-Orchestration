@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+ title: Status Notification API
+ description: Status Notification Use Case Specification
+ version: 1.0.0
+
+servers:
+ - SMTP server
+   description: receives email to send from OpenC2
+ - OpenC2
+   description: send email to SMTP server
+
+paths:
+   post:
+     summary: Openc2 sends an email notification to user.
+     requestBody:
+       description: Email sent to SMTP
+       required: true
+       content:
+         MIMEText:
+           schema:
+             authentication: authenticates with host
+             subject: ‘Status Notification for Phish Case ‘ + ID
+             to: Applicable users for specific phish case
+             from: Phish-Orch email
+             text: PhishCase status update
+     responses:
+       '200':    # status code
+         description: OK. sends confirmation message as a string
+         content:
+           application/json:
+             schema:
+               type: string
