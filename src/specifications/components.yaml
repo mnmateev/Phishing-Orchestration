@@ -56,6 +56,13 @@ components:
   # Reusable responses, such as 401 Unauthorized or 400 Bad Request
   responses:
 
+    200OK:
+      description: OK. sends confirmation message as a string
+      content:
+        application/json:
+          schema:
+            type: string
+
   # Reusable response headers
   headers:
 

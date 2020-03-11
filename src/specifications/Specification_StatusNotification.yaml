@@ -27,9 +27,4 @@ paths:
              from: Phish-Orch email
              text: PhishCase status update
      responses:
-       '200':    # status code
-         description: OK. sends confirmation message as a string
-         content:
-           application/json:
-             schema:
-               type: string
+       $ref: #/components/responses/200OK

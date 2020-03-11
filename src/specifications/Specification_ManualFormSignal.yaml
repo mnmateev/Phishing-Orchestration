@@ -23,9 +23,4 @@ paths:
            schema:
              $ref: '#/components/schemas/PhishCase'
      responses:
-       '200':    # status code
-         description: OK. sends confirmation message as a string
-         content:
-           application/json:
-             schema:
-               type: string
+       $ref: #/components/responses/200OK
