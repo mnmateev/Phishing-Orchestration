@@ -28,6 +28,7 @@ arguments['webid'] = webid
 request['arguments'] = arguments
 
 # step 2: send request
+request = jsonpickle.encode(request)
 response = requests.post(joeSandboxAddr, request, headers={'Connection':'close'})
 
 # step 3: parse results
