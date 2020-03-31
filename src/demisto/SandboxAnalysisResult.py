@@ -12,35 +12,9 @@ import requests
 
 joeSandboxAddr = 'http://127.0.0.1:8000'
 
-##############################
-# submit sample for analysis #
-##############################
-
-# step 1: build request
-sampleURL = ''
-comments = ''
-
-request = {}
-request['name'] = 'joe-analysis-submit-sample'
-
-arguments = {}
-arguments[''] =
-arguments[''] =
-
-request['arguments'] = arguments
-
-# step 2: send request
-response = requests.post(joeSandboxAddr, request, headers={'Connection':'close'})
-
-# step 3: parse results
-response = jsonpickle.decode(response)
-status =
-comments =
-score =
-
 ################################
 # show completed analysis info #
-#################################
+################################
 
 # step 1: build request
 webid = 'exampleID'
@@ -49,7 +23,7 @@ request = {}
 request['name'] = 'joe-analysis-info'
 
 arguments = {}
-arguments[''] =
+arguments['webid'] = webid
 
 request['arguments'] = arguments
 
@@ -58,6 +32,6 @@ response = requests.post(joeSandboxAddr, request, headers={'Connection':'close'}
 
 # step 3: parse results
 response = jsonpickle.decode(response)
-status =
-comments =
-score =
+status = response['Joe']['Analysis']['Status']
+comments = response['Joe']['Analysis']['Comments']
+score = response['DBotScore']['Score']
